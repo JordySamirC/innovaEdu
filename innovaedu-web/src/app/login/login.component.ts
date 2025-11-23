@@ -39,4 +39,9 @@ export class LoginComponent {
             this.errorMessage = err.error?.message || 'Error de autenticación';
         }
     }
+
+    onGoogleLogin() {
+        console.log('Google login clicked');
+        // TODO: Implement Google Sign-In integration
+    }
 }

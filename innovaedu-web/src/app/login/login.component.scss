@@ -1,0 +1,238 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:host {
+    display: block;
+    font-family: 'Inter', sans-serif;
+}
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7f9fc;
+    /* Light neutral background */
+    padding: 1rem;
+}
+
+.login-card {
+    background: #ffffff;
+    border-radius: 24px;
+    /* More rounded corners */
+    padding: 3rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    /* Softer, larger shadow */
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    animation: fadeIn 0.6s ease-out;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+
+    h2 {
+        color: #1a202c;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.75rem;
+        letter-spacing: -0.02em;
+    }
+
+    p {
+        color: #718096;
+        margin: 0;
+        font-size: 1rem;
+    }
+}
+
+.form-group {
+    margin-bottom: 1.75rem;
+
+    label {
+        display: block;
+        color: #2d3748;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.6rem;
+    }
+}
+
+.input-wrapper {
+    position: relative;
+
+    input {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+        border: 2px solid #edf2f7;
+        border-radius: 12px;
+        font-size: 1rem;
+        color: #2d3748;
+        transition: all 0.2s ease;
+        outline: none;
+        background-color: #f8fafc;
+        box-sizing: border-box;
+
+        &::placeholder {
+            color: #a0aec0;
+        }
+
+        &:focus {
+            border-color: #FB6962;
+            /* Califica.ai Bittersweet */
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(251, 105, 98, 0.15);
+        }
+
+        &.error {
+            border-color: #fc8181;
+            background-color: #fff5f5;
+
+            &:focus {
+                box-shadow: 0 0 0 4px rgba(252, 129, 129, 0.15);
+            }
+        }
+    }
+}
+
+.error-msg {
+    color: #e53e3e;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+    font-weight: 500;
+}
+
+.form-error {
+    background-color: #fff5f5;
+    color: #c53030;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid #feb2b2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 1rem;
+    background-color: #FB6962;
+    /* Califica.ai Bittersweet */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(251, 105, 98, 0.3);
+
+    &:hover:not(:disabled) {
+        background-color: #e0554e;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(251, 105, 98, 0.4);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(251, 105, 98, 0.3);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #cbd5e0;
+        box-shadow: none;
+        transform: none;
+    }
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: #a0aec0;
+    font-size: 0.9rem;
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    span {
+        padding: 0 1rem;
+    }
+}
+
+.btn-google {
+    width: 100%;
+    padding: 0.875rem;
+    background-color: #ffffff;
+    color: #2d3748;
+    border: 2px solid #edf2f7;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+
+    img {
+        width: 20px;
+        height: 20px;
+    }
+
+    &:hover {
+        background-color: #f8fafc;
+        border-color: #cbd5e0;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        background-color: #edf2f7;
+    }
+}
+
+.login-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #718096;
+
+    a {
+        color: #FB6962;
+        /* Califica.ai Bittersweet */
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+
+        &:hover {
+            color: #e0554e;
+            text-decoration: underline;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
