@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -8,24 +9,30 @@ import { firstValueFrom } from 'rxjs';
 export class AuthService {
     private apiUrl = '/api/auth';
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) { }
 
     async login(email: string, password: string): Promise<{ token: string; username: string }> {
         const response = await firstValueFrom(
             this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password })
         );
         const token = response.token;
-        localStorage.setItem('jwt', token);
+        if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('jwt', token);
+        }
         // Get user data
         try {
             const user = await this.getCurrentUser();
             const username = user.username;
-            localStorage.setItem('username', username);
+            if (isPlatformBrowser(this.platformId)) {
+                localStorage.setItem('username', username);
+            }
             console.log('Username saved:', username);
             return { token, username };
         } catch (error) {
             console.error('Error getting user:', error);
-            localStorage.setItem('username', email); // Fallback to email
+            if (isPlatformBrowser(this.platformId)) {
+                localStorage.setItem('username', email); // Fallback to email
+            }
             return { token, username: email };
         }
     }
@@ -42,11 +49,16 @@ export class AuthService {
     }
 
     logout() {
-        localStorage.removeItem('jwt');
+        if (isPlatformBrowser(this.platformId)) {
+            localStorage.removeItem('jwt');
+        }
     }
 
     getToken(): string | null {
-        return localStorage.getItem('jwt');
+        if (isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('jwt');
+        }
+        return null;
     }
 
     getRole(): string | null {
@@ -72,6 +84,9 @@ export class AuthService {
     }
 
     getUsername(): string | null {
-        return localStorage.getItem('username');
+        if (isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('username');
+        }
+        return null;
     }
 }
