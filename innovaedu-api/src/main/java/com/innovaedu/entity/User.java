@@ -20,5 +20,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    private String role = "STUDENT"; // STUDENT, TEACHER, ADMIN
+    @Column(nullable = false)
+    private boolean active = true;
+
+    private String role = "TEACHER"; // STUDENT, TEACHER, ADMIN
 }

@@ -44,8 +44,8 @@ public class SecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests()
-                 .requestMatchers("/api/auth/**", "/swagger-ui/**", "/api-docs/**").permitAll()
-                 .anyRequest().authenticated();
+                  .requestMatchers("/api/auth/**", "/swagger-ui/**", "/api-docs/**").permitAll()
+                  .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

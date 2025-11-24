@@ -32,9 +32,13 @@ export class LoginComponent {
         }
         const { email, password } = this.loginForm.value;
         try {
-            const token = await this.authService.login(email, password);
-            localStorage.setItem('jwt', token);
-            this.router.navigate(['/dashboard']);
+            const { token, username } = await this.authService.login(email, password);
+            const role = this.authService.getRole();
+            if (role === 'ADMIN') {
+                this.router.navigate(['/dashboard/admin']);
+            } else {
+                this.router.navigate(['/dashboard/teacher']);
+            }
         } catch (err: any) {
             this.errorMessage = err.error?.message || 'Error de autenticación';
         }
