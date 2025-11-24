@@ -37,18 +37,18 @@
          <input type="text" placeholder="Buscar materiales, tutoriales..." class="search-input">
        </div>
        <div class="user-section">
-         <div class="user-dropdown" (click)="toggleDropdown()" [class.open]="dropdownOpen">
-           <div class="user-info">
-             <svg class="user-icon" viewBox="0 0 24 24" fill="currentColor">
-               <circle cx="12" cy="8" r="4" />
-               <path d="M20 20c0-4.4-3.6-8-8-8s-8 3.6-8 8" />
-             </svg>
-             <span class="user-email">{{ userName }}</span>
+          <div class="user-dropdown" [class.open]="dropdownOpen">
+            <div class="user-info">
+              <svg class="user-icon" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M20 20c0-4.4-3.6-8-8-8s-8 3.6-8 8" />
+              </svg>
+              <span class="user-email" (click)="toggleDropdown()">{{ userName }}</span>
              <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="currentColor">
                <path d="M7 10l5 5 5-5z" />
              </svg>
            </div>
-           <div class="dropdown-menu" *ngIf="dropdownOpen">
+            <div class="dropdown-menu" [class.open]="dropdownOpen" *ngIf="dropdownOpen">
              <div class="dropdown-item user-email-display">
                <svg viewBox="0 0 24 24" fill="currentColor">
                  <path
@@ -114,7 +114,7 @@
           <label for="topic">Tema:</label>
           <input type="text" id="topic" formControlName="topic" placeholder="Ej: Números naturales">
         </div>
-        <button type="submit" [disabled]="generationForm.invalid">Generar Material</button>
+         <button type="submit" [disabled]="generationForm.invalid" class="generate-btn">Generar Material</button>
       </form>
       <div *ngIf="generatedMaterial" class="generated-material">
         <h3>Material Generado:</h3>
