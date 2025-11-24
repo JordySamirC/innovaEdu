@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-teacher-dashboard-generation',
@@ -9,17 +10,22 @@ import { Component } from '@angular/core';
   templateUrl: './teacher-dashboard-generation.component.html',
   styleUrls: ['./teacher-dashboard-generation.component.scss']
 })
-export class TeacherDashboardGenerationComponent {
+export class TeacherDashboardGenerationComponent implements OnInit {
   generationForm: FormGroup;
   generatedMaterial: string | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private title: Title, private meta: Meta) {
     this.generationForm = this.fb.group({
       grade: ['', Validators.required],
       subject: ['', Validators.required],
       materialType: ['', Validators.required],
       topic: ['', Validators.required]
     });
+  }
+
+  ngOnInit() {
+    this.title.setTitle('Generación de Materiales Pedagógicos - InnovaEdu');
+    this.meta.updateTag({ name: 'description', content: 'Crea materiales educativos personalizados alineados al CNEB con herramientas de IA.' });
   }
 
   generateMaterial() {

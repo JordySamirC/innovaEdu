@@ -1,6 +1,13 @@
 <div class="training-container">
   <div class="training-section">
-  <h2>Espacio de Capacitación Docente</h2>
+  <h2 id="training-title">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M2 17L12 22L22 17" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M2 12L12 17L22 12" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    Espacio de Capacitación Docente
+  </h2>
   <div class="tutorial-list">
     <div *ngFor="let tutorial of tutorials" class="tutorial-card">
       <h3>{{ tutorial.title }}</h3>
