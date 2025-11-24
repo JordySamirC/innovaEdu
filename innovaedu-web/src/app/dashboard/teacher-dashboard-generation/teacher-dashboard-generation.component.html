@@ -1,0 +1,47 @@
+<div class="generation-section">
+  <h2>Generación Automática de Materiales Pedagógicos</h2>
+  <form [formGroup]="generationForm" (ngSubmit)="generateMaterial()">
+    <div class="form-group">
+      <label for="grade">Grado:</label>
+      <select id="grade" formControlName="grade">
+        <option value="">Seleccionar</option>
+        <option value="1">1° Grado</option>
+        <option value="2">2° Grado</option>
+        <option value="3">3° Grado</option>
+        <option value="4">4° Grado</option>
+        <option value="5">5° Grado</option>
+        <option value="6">6° Grado</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="subject">Área:</label>
+      <select id="subject" formControlName="subject">
+        <option value="">Seleccionar</option>
+        <option value="Matemáticas">Matemáticas</option>
+        <option value="Lenguaje">Lenguaje</option>
+        <option value="Ciencias">Ciencias</option>
+        <option value="Historia">Historia</option>
+        <option value="Geografía">Geografía</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="materialType">Tipo de Material:</label>
+      <select id="materialType" formControlName="materialType">
+        <option value="">Seleccionar</option>
+        <option value="Sesión de Aprendizaje">Sesión de Aprendizaje</option>
+        <option value="Ficha Práctica">Ficha Práctica</option>
+        <option value="Rúbrica">Rúbrica</option>
+        <option value="Unidad de Aprendizaje">Unidad de Aprendizaje</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="topic">Tema:</label>
+      <input type="text" id="topic" formControlName="topic" placeholder="Ej: Números naturales">
+    </div>
+    <button type="submit" [disabled]="generationForm.invalid" class="primary-btn">Generar Material</button>
+  </form>
+  <div *ngIf="generatedMaterial" class="generated-material">
+    <h3>Material Generado:</h3>
+    <p>{{ generatedMaterial }}</p>
+  </div>
+</div>

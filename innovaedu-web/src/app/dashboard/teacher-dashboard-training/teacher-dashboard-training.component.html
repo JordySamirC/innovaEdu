@@ -1,0 +1,10 @@
+<div class="training-section">
+  <h2>Espacio de Capacitación Docente</h2>
+  <div class="tutorial-list">
+    <div *ngFor="let tutorial of tutorials" class="tutorial-card">
+      <h3>{{ tutorial.title }}</h3>
+      <p>{{ tutorial.description }}</p>
+      <a [href]="tutorial.link" target="_blank">Ver Tutorial</a>
+    </div>
+  </div>
+</div>
