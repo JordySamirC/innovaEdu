@@ -12,6 +12,8 @@ interface MaterialResponse {
   topic: string;
 }
 
+
+
 @Component({
   selector: 'app-teacher-dashboard-generation',
   standalone: true,
@@ -443,20 +445,20 @@ VII. REFERENCIAS BIBLIOGRÁFICAS:
                   size: A4;
                   margin: 2cm;
                 }
-                
+
                 @media print {
                   body {
                     margin: 0;
                     padding: 0;
                   }
-                  
+
                   /* Ocultar headers y footers del navegador */
                   @page {
                     margin-top: 0;
                     margin-bottom: 0;
                   }
                 }
-                
+
                 body {
                   font-family: 'Arial', sans-serif;
                   padding: 20mm;
@@ -466,7 +468,7 @@ VII. REFERENCIAS BIBLIOGRÁFICAS:
                   max-width: 210mm;
                   margin: 0 auto;
                 }
-                
+
                 pre {
                   white-space: pre-wrap;
                   font-family: 'Courier New', monospace;
@@ -474,7 +476,7 @@ VII. REFERENCIAS BIBLIOGRÁFICAS:
                   margin: 0;
                   line-height: 1.5;
                 }
-                
+
                 h1 {
                   text-align: center;
                   color: #2d3748;
