@@ -38,12 +38,12 @@
        </div>
        <div class="user-section">
           <div class="user-dropdown" [class.open]="dropdownOpen">
-            <div class="user-info">
+            <div class="user-info" (click)="toggleDropdown()">
               <svg class="user-icon" viewBox="0 0 24 24" fill="currentColor">
                 <circle cx="12" cy="8" r="4" />
                 <path d="M20 20c0-4.4-3.6-8-8-8s-8 3.6-8 8" />
               </svg>
-              <span class="user-email" (click)="toggleDropdown()">{{ userName }}</span>
+              <span class="user-email">{{ userName }}</span>
              <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="currentColor">
                <path d="M7 10l5 5 5-5z" />
              </svg>

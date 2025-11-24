@@ -108,32 +108,32 @@
 
 // Header
 .main-header {
+  background: white;
+  padding: 20px 30px;
+  border-bottom: 1px solid #edf2f7;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 30px;
-  background: white;
-  border-bottom: 1px solid #edf2f7;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   .search-bar {
-    position: relative;
     flex: 1;
     max-width: 400px;
+    position: relative;
 
     .search-input {
       width: 100%;
       padding: 12px 16px 12px 44px;
       border: 2px solid #edf2f7;
       border-radius: 25px;
-      background: #f8fafc;
       font-size: 14px;
+      background: #f8fafc;
       transition: all 0.3s ease;
 
       &:focus {
         outline: none;
-        background: white;
         border-color: #667eea;
+        background: white;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       }
 
@@ -147,9 +147,9 @@
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
+      color: #a0aec0;
       width: 18px;
       height: 18px;
-      color: #a0aec0;
     }
   }
 
@@ -210,12 +210,12 @@
         position: absolute;
         top: 100%;
         right: 0;
-        z-index: 1000;
-        min-width: 200px;
         background: white;
         border: 1px solid #edf2f7;
         border-radius: 12px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        min-width: 200px;
+        z-index: 1000;
         opacity: 0;
         visibility: hidden;
         transform: translateY(-10px);
@@ -236,31 +236,41 @@
           color: #4a5568;
           text-decoration: none;
           transition: all 0.3s ease;
+          cursor: pointer;
+          border: none;
+          background: transparent;
+          width: 100%;
+          text-align: left;
+          font-size: 14px;
 
           svg {
             width: 18px;
             height: 18px;
+            flex-shrink: 0;
           }
 
           &.user-email-display {
             border-bottom: 1px solid #edf2f7;
             font-weight: 500;
             color: #2d3748;
+            cursor: default;
           }
 
-          &:hover {
+          &:hover:not(.user-email-display) {
             background: rgba(102, 126, 234, 0.1);
             color: #667eea;
-          }
 
-          &:hover:not(.user-email-display) svg {
-            transform: translateX(2px);
+            svg {
+              transform: translateX(2px);
+            }
           }
         }
       }
     }
   }
 }
+
+
 
 .navbar {
   display: flex;
@@ -453,26 +463,26 @@
         }
       }
 
-       select,
-       input {
-         padding: 12px 16px;
-         border: 2px solid #edf2f7;
-         border-radius: 12px;
-         background: white;
-         font-size: 14px;
-         transition: all 0.3s ease;
+      select,
+      input {
+        padding: 12px 16px;
+        border: 2px solid #edf2f7;
+        border-radius: 12px;
+        background: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
 
-         &:hover {
-           border-color: #edf2f7;
-           transform: none;
-         }
+        &:hover {
+          border-color: #edf2f7;
+          transform: none;
+        }
 
-         &:focus {
-           outline: none;
-           border-color: #667eea;
-           box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-         }
-       }
+        &:focus {
+          outline: none;
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+      }
 
       .primary-btn {
         position: relative;
@@ -670,28 +680,28 @@
     }
   }
 
-     .generate-btn {
-        margin-top: 20px;
-        padding: 14px 24px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        border-radius: 12px;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
+  .generate-btn {
+    margin-top: 20px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-        &:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
 
-         &:disabled {
-           background: #a0aec0;
-           opacity: 0.6;
-           cursor: not-allowed;
-         }
-     }
+    &:disabled {
+      background: #a0aec0;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
 }
 
 // Modal
