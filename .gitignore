@@ -1,0 +1,40 @@
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Build outputs
+dist/
+build/
+target/
+*.class
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Angular
+.angular/
+node_modules/
+
+# Dependencies
+package-lock.json
+
+# Java/Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Temporary files
+*.tmp
+*.swp
+*~
