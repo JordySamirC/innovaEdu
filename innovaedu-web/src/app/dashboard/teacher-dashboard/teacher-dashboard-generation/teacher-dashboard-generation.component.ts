@@ -2,15 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
-
-interface MaterialResponse {
-  id: number;
-  type: string;
-  content: string;
-  grade: string;
-  subject: string;
-  topic: string;
-}
+import { AiGenerationService, MaterialResponse } from '../../../shared/services/ai-generation.service';
 
 
 
@@ -30,7 +22,8 @@ export class TeacherDashboardGenerationComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private title: Title,
     private meta: Meta,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private aiService: AiGenerationService
   ) {
     this.generationForm = this.fb.group({
       grade: ['', Validators.required],
@@ -51,51 +44,64 @@ export class TeacherDashboardGenerationComponent implements OnInit, OnDestroy {
     this.isLoading = false;
   }
 
-  async generateMaterial() {
+  generateMaterial() {
     if (this.generationForm.valid) {
-      console.log('🚀 Iniciando generación...');
+      console.log('🚀 Iniciando generación con IA real...');
       this.isLoading = true;
+      this.generatedMaterial = null;
 
-      // Simular delay de generación
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const formData = this.generationForm.value;
+      console.log('📝 Datos del formulario:', formData);
 
-      try {
-        const formData = this.generationForm.value;
-        console.log('📝 Datos del formulario:', formData);
+      const request = {
+        type: formData.materialType,
+        grade: formData.grade,
+        subject: formData.subject,
+        topic: formData.topic
+      };
 
-        const content = this.generateContent(
-          formData.materialType,
-          formData.grade,
-          formData.subject,
-          formData.topic
-        );
+      this.aiService.generateMaterial(request).subscribe({
+        next: (response) => {
+          console.log('✅ Material generado con IA:', response);
+          this.generatedMaterial = response;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('❌ Error generando material:', error);
+          this.isLoading = false;
 
-        console.log('✅ Contenido generado, longitud:', content.length);
+          let errorMessage = 'Hubo un error al generar el material. ';
+          if (error.status === 401) {
+            errorMessage += 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+          } else if (error.status === 0) {
+            errorMessage += 'No se puede conectar con el servidor. Verifica que el backend esté ejecutándose.';
+          } else if (error.error?.message) {
+            errorMessage += error.error.message;
+          } else {
+            errorMessage += 'Por favor, intenta nuevamente.';
+          }
 
-        this.generatedMaterial = {
-          id: Date.now(),
-          type: formData.materialType,
-          content: content,
-          grade: formData.grade,
-          subject: formData.subject,
-          topic: formData.topic
-        };
-
-        console.log('✅ Material asignado:', this.generatedMaterial);
-      } catch (error) {
-        console.error('❌ Error generating material:', error);
-        alert('Hubo un error al generar el material. Por favor, intenta nuevamente.');
-      } finally {
-        console.log('🏁 Finalizando generación, isLoading = false');
-        this.isLoading = false;
-        this.cdr.detectChanges(); // Forzar detección de cambios
-      }
+          alert(errorMessage);
+          this.cdr.detectChanges();
+        }
+      });
     } else {
       console.warn('⚠️ Formulario inválido');
+      alert('Por favor, completa todos los campos del formulario.');
     }
   }
 
-  private generateContent(type: string, grade: string, subject: string, topic: string): string {
+  // Métodos de generación mock eliminados - ahora se usa IA real
+  // Los siguientes métodos ya no son necesarios:
+  // - generateContent
+  // - generateSessionPlan
+  // - generateWorksheet
+  // - generateContextualProblem
+  // - generateRubric
+  // - generateLearningUnit
+
+  private generateContentOLD_REMOVED(type: string, grade: string, subject: string, topic: string): string {
     const gradeText = `${grade}° Grado`;
 
     switch (type) {
