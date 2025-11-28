@@ -10,21 +10,12 @@ import com.itextpdf.layout.element.Paragraph;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class MaterialService {
@@ -32,43 +23,36 @@ public class MaterialService {
     @Autowired
     private MaterialRepository materialRepository;
 
-    @Value("${huggingface.api.token}")
-    private String huggingFaceToken;
-
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ChatClient.Builder chatClientBuilder;
 
     public Material generateMaterial(String type, String grade, String subject, String topic, User user) {
         System.out.println("🚀 Generando material para: " + type + ", " + grade + ", " + subject + ", " + topic);
-        System.out.println("🔑 Token de Hugging Face configurado: "
-                + (huggingFaceToken != null && !huggingFaceToken.isEmpty() ? "SÍ" : "NO"));
 
         String content;
-        boolean useAI = true; // Activado: usando IA de Hugging Face
+        boolean useAI = true; // Activado: usando Spring AI con Hugging Face
 
         if (useAI) {
             try {
                 String prompt = buildPrompt(type, grade, subject, topic);
-                System.out.println("📝 Intentando generar con IA de Hugging Face...");
-                System.out.println("📄 Prompt generado (primeros 200 caracteres): "
-                        + prompt.substring(0, Math.min(200, prompt.length())));
+                System.out.println("📝 Generando con Spring AI + Hugging Face (Mistral-7B)...");
+                System.out.println("📄 Prompt (primeros 150 caracteres): "
+                        + prompt.substring(0, Math.min(150, prompt.length())) + "...");
 
-                content = generateWithHuggingFace(prompt);
+                content = generateWithSpringAI(prompt);
+
                 System.out.println("✅ Contenido generado con IA exitosamente");
-                System.out.println("📏 Longitud del contenido: " + content.length() + " caracteres");
-                System.out.println(
-                        "📄 Primeros 200 caracteres: " + content.substring(0, Math.min(200, content.length())));
+                System.out.println("📏 Longitud: " + content.length() + " caracteres");
 
                 if (content == null || content.trim().length() < 50) {
-                    System.out.println("⚠️ Contenido muy corto (< 50 caracteres), usando fallback");
+                    System.out.println("⚠️ Contenido muy corto, usando fallback");
                     content = generateFallbackContent(type, grade, subject, topic);
                 }
             } catch (Exception e) {
                 System.err.println("❌ ERROR GENERANDO CON IA: " + e.getClass().getName());
-                System.err.println("❌ Mensaje de error: " + e.getMessage());
-                System.err.println("❌ Stack trace completo:");
+                System.err.println("❌ Mensaje: " + e.getMessage());
                 e.printStackTrace();
-                System.out.println("📋 Usando contenido de fallback debido al error");
+                System.out.println("📋 Usando contenido de fallback");
                 content = generateFallbackContent(type, grade, subject, topic);
             }
         } else {
@@ -88,6 +72,19 @@ public class MaterialService {
         System.out.println("💾 Material guardado con ID: " + savedMaterial.getId());
 
         return savedMaterial;
+    }
+
+    /**
+     * Genera contenido usando Spring AI con Hugging Face
+     * Modelo: Mistral-7B-Instruct-v0.2 (gratuito, excelente para español)
+     */
+    private String generateWithSpringAI(String prompt) {
+        ChatClient chatClient = chatClientBuilder.build();
+
+        return chatClient.prompt()
+                .user(prompt)
+                .call()
+                .content();
     }
 
     private String buildPrompt(String type, String grade, String subject, String topic) {
@@ -137,84 +134,6 @@ public class MaterialService {
         prompt.append("\nEscribe en español con formato claro y profesional.");
 
         return prompt.toString();
-    }
-
-    private String generateWithHuggingFace(String prompt) {
-        // Nueva API de Hugging Face - compatible con OpenAI
-        // Documentación: https://huggingface.co/docs/inference-providers
-        String apiUrl = "https://api-inference.huggingface.co/models/Qwen/Qwen2.5-7B-Instruct";
-
-        System.out.println("🌐 Llamando a Hugging Face API con Qwen2.5-7B-Instruct...");
-        System.out.println("📝 Prompt: " + prompt.substring(0, Math.min(100, prompt.length())) + "...");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + huggingFaceToken);
-        headers.set("Content-Type", "application/json");
-
-        // Formato de la API de Hugging Face Inference
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("inputs", prompt);
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("max_new_tokens", 1500);
-        parameters.put("temperature", 0.7);
-        parameters.put("top_p", 0.95);
-        parameters.put("do_sample", true);
-        parameters.put("return_full_text", false);
-        requestBody.put("parameters", parameters);
-
-        Map<String, Object> options = new HashMap<>();
-        options.put("wait_for_model", true);
-        requestBody.put("options", options);
-
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, String.class);
-
-            System.out.println("📡 Respuesta recibida, status: " + response.getStatusCode());
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                String responseBody = response.getBody();
-                System.out.println(
-                        "📄 Cuerpo de respuesta: " + responseBody.substring(0, Math.min(200, responseBody.length())));
-
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
-
-                // Manejar diferentes formatos de respuesta de Hugging Face
-                String generatedText;
-
-                if (jsonNode.isArray() && jsonNode.size() > 0) {
-                    JsonNode firstElement = jsonNode.get(0);
-                    if (firstElement.has("generated_text")) {
-                        generatedText = firstElement.get("generated_text").asText();
-                    } else if (firstElement.isTextual()) {
-                        generatedText = firstElement.asText();
-                    } else {
-                        throw new RuntimeException("Formato de respuesta array inesperado: " + responseBody);
-                    }
-                } else if (jsonNode.has("generated_text")) {
-                    generatedText = jsonNode.get("generated_text").asText();
-                } else if (jsonNode.has("error")) {
-                    String error = jsonNode.get("error").asText();
-                    throw new RuntimeException("Error de Hugging Face API: " + error);
-                } else {
-                    throw new RuntimeException("Formato de respuesta inesperado: " + responseBody);
-                }
-
-                // Limpiar el texto generado
-                generatedText = generatedText.trim();
-
-                System.out.println("✅ Contenido generado exitosamente, longitud: " + generatedText.length());
-                return generatedText;
-            } else {
-                throw new RuntimeException("Error en la respuesta de la API: " + response.getStatusCode());
-            }
-        } catch (Exception e) {
-            System.err.println("❌ Error llamando a Hugging Face: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Error generando contenido con IA: " + e.getMessage(), e);
-        }
     }
 
     private String generateFallbackContent(String type, String grade, String subject, String topic) {
