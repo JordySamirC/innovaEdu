@@ -10,12 +10,21 @@ import com.itextpdf.layout.element.Paragraph;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class MaterialService {
@@ -23,8 +32,8 @@ public class MaterialService {
     @Autowired
     private MaterialRepository materialRepository;
 
-    @Autowired
-    private ChatClient.Builder chatClientBuilder;
+    @Value("${HUGGINGFACE_API_TOKEN}")
+    private String huggingFaceToken;
 
     public Material generateMaterial(String type, String grade, String subject, String topic, User user) {
         System.out.println("🚀 Generando material para: " + type + ", " + grade + ", " + subject + ", " + topic);
@@ -35,14 +44,16 @@ public class MaterialService {
         if (useAI) {
             try {
                 String prompt = buildPrompt(type, grade, subject, topic);
-                System.out.println("📝 Generando con Spring AI + Hugging Face (Mistral-7B)...");
+                System.out.println("📝 Generando con Spring AI + Hugging Face (Llama-3.2-3B)...");
                 System.out.println("📄 Prompt (primeros 150 caracteres): "
                         + prompt.substring(0, Math.min(150, prompt.length())) + "...");
 
-                content = generateWithSpringAI(prompt);
+                content = generateWithAI(prompt);
 
                 System.out.println("✅ Contenido generado con IA exitosamente");
-                System.out.println("📏 Longitud: " + content.length() + " caracteres");
+                if (content != null) {
+                    System.out.println("📏 Longitud: " + content.length() + " caracteres");
+                }
 
                 if (content == null || content.trim().length() < 50) {
                     System.out.println("⚠️ Contenido muy corto, usando fallback");
@@ -76,15 +87,58 @@ public class MaterialService {
 
     /**
      * Genera contenido usando Spring AI con Hugging Face
-     * Modelo: Mistral-7B-Instruct-v0.2 (gratuito, excelente para español)
+     * Modelo: Llama-3.2-3B-Instruct (gratuito)
      */
-    private String generateWithSpringAI(String prompt) {
-        ChatClient chatClient = chatClientBuilder.build();
+    private String generateWithAI(String prompt) {
+        String url = "https://router.huggingface.co/v1/chat/completions";
+        String apiKey = this.huggingFaceToken;
 
-        return chatClient.prompt()
-                .user(prompt)
-                .call()
-                .content();
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Configurar headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        // Crear el cuerpo de la petición
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("model", "meta-llama/Llama-3.2-3B-Instruct");
+        requestBody.put("max_tokens", 1500);
+        requestBody.put("temperature", 0.7);
+
+        // Mensajes
+        Map<String, String> userMessage = new HashMap<>();
+        userMessage.put("role", "user");
+        userMessage.put("content", prompt);
+        requestBody.put("messages", List.of(userMessage));
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+
+        try {
+            System.out.println("🚀 Enviando petición a Hugging Face Router API...");
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    request,
+                    Map.class);
+
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody != null && responseBody.containsKey("choices")) {
+                List<Map<String, Object>> choices = (List<Map<String, Object>>) responseBody.get("choices");
+                if (!choices.isEmpty()) {
+                    Map<String, Object> messageObj = (Map<String, Object>) choices.get(0).get("message");
+                    String content = (String) messageObj.get("content");
+                    System.out.println("✅ Respuesta recibida de Hugging Face");
+                    return content;
+                }
+            }
+            System.out.println("⚠️ Respuesta vacía de Hugging Face");
+            return null;
+        } catch (Exception e) {
+            System.out.println("❌ Error llamando a Hugging Face API: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private String buildPrompt(String type, String grade, String subject, String topic) {

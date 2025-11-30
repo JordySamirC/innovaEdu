@@ -5,7 +5,7 @@ InnovaEdu es una plataforma educativa full-stack para capacitación docente, que
 ## Características
 
 - **Frontend (Angular 21)**: Aplicación web responsiva con páginas de inicio, login y registro. Incluye herramientas para generar materiales pedagógicos alineados al Currículo Nacional (CNEB).
-- **Backend (Spring Boot 3.3.2)**: API REST con autenticación JWT, gestión de usuarios, cursos y matrículas. Utiliza **Hugging Face API** con el modelo gratuito **Qwen2.5-7B-Instruct** para generar contenido pedagógico personalizado (sesiones de aprendizaje, fichas prácticas, rúbricas, etc.). Incluye exportación a PDF (iText) y DOCX (Apache POI).
+- **Backend (Spring Boot 3.3.2)**: API REST con autenticación JWT, gestión de usuarios, cursos y matrículas. Utiliza **Hugging Face API** con el modelo **meta-llama/Llama-3.2-3B-Instruct** para generar contenido pedagógico personalizado (sesiones de aprendizaje, fichas prácticas, rúbricas, etc.). Configuración segura mediante variables de entorno (`.env`). Incluye exportación a PDF (iText) y DOCX (Apache POI).
 - **Base de Datos**: PostgreSQL para persistencia de datos.
 
 ## Requisitos
@@ -34,13 +34,13 @@ InnovaEdu es una plataforma educativa full-stack para capacitación docente, que
 2. **Configura PostgreSQL**:
    - Instala PostgreSQL si no lo tienes.
    - Crea una base de datos llamada `innovaedu`.
-   - Usuario: `postgres`
-   - Contraseña: `1984GeorgeOrwell`
-   - Puerto: `5432`
+   - Usuario: `tu usuario`
+   - Contraseña: `tu contraseña`
+   - Puerto: `tu puerto`
 
    Si usas Docker:
    ```bash
-   docker run --name postgres-innovaedu -e POSTGRES_DB=innovaedu -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=1984GeorgeOrwell -p 5432:5432 -d postgres:13
+   docker run --name postgres-innovaedu -e POSTGRES_DB=innovaedu -e POSTGRES_USER=tu_usuario -e POSTGRES_PASSWORD=tu_contraseña -p 5432:5432 -d postgres:13
    ```
 
 3. **Instala dependencias del frontend**:
@@ -50,11 +50,32 @@ InnovaEdu es una plataforma educativa full-stack para capacitación docente, que
    cd ..
    ```
 
-4. **Configura el token de Hugging Face**:
-   - Crea una cuenta gratuita en [Hugging Face](https://huggingface.co/join)
-   - Genera un token de acceso en [Settings > Access Tokens](https://huggingface.co/settings/tokens)
-   - Edita `innovaedu-api/src/main/resources/application.properties`
-   - Actualiza la línea: `huggingface.api.token=TU_TOKEN_AQUI`
+4. **Configura las variables de entorno**:
+   - Navega a la carpeta `innovaedu-api`.
+   - Crea un archivo llamado `.env`.
+   - **IMPORTANTE**: No subas este archivo al repositorio.
+   
+   Contenido del archivo `.env`:
+   ```env
+   # --- BASE DE DATOS ---
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=innovaedu
+   DB_USERNAME=tu usuario
+   DB_PASSWORD=tu contraseña
+
+   # --- SEGURIDAD (JWT) ---
+   JWT_SECRET=tu_clave_secreta_muy_larga_y_segura
+
+   # --- INTELIGENCIA ARTIFICIAL (Hugging Face) ---
+   # Consigue tu token en: https://huggingface.co/settings/tokens
+   # Asegúrate de tener permisos para el modelo meta-llama/Llama-3.2-3B-Instruct
+   HUGGINGFACE_API_TOKEN=hf_tu_token_de_hugging_face
+
+   # --- INTEGRACIONES EXTERNAS ---
+   GOOGLE_CLIENT_ID=tu-google-client-id
+   GOOGLE_CLIENT_SECRET=tu-google-client-secret
+   ```
 
 5. **Instala dependencias del backend**:
    ```bash
